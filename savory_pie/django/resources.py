@@ -74,7 +74,9 @@ class QuerySetResource(Resource):
             return queryset
 
     def build_page_uri(self, ctx, page):
-        return ctx.build_resource_uri(self) + '?' + urllib.urlencode({'page': page})
+        params = ctx.request.GET.copy()
+        params.update({'page': page})
+        return ctx.build_resource_uri(self) + '?' + urllib.urlencode(params)
 
     def to_resource(self, model):
         """
