@@ -115,6 +115,29 @@ class QuerySetResource(Resource):
                     return True
         return False
 
+    def paginate(self, ctx, params, count, meta=None):
+        # When paging the sliced_queryset will not contain all the objects,
+        # so the count of the accumulated objects is insufficient.  In that case,
+        # need to make a call to queryset.count.
+        if not meta:
+            meta = dict()
+
+        page = params.get_as('page', int, 0)
+
+        meta['count'] = count
+        # subtract one from count in case our count is at page size
+        # then add 1 to the number of pages since python rounds down
+        # this should be better than using math.ceil
+        meta['total_pages'] = ((count - 1) / self.page_size) + 1
+
+        if page > 0:
+            meta['prev'] = self.build_page_uri(ctx, page - 1)
+
+        if (page + 1) * self.page_size < count:
+            meta['next'] = self.build_page_uri(ctx, page + 1)
+
+        return meta
+
     def get(self, ctx, params):
         if not self.allow_unfiltered_query and not self.has_valid_key(ctx, params):
             raise SavoryPieError(
@@ -135,30 +158,24 @@ class QuerySetResource(Resource):
             model_json['$hash'] = get_sha1(ctx, model_json)
             objects.append(model_json)
 
-        meta = dict()
+
         if self.supports_paging:
             # When paging the sliced_queryset will not contain all the objects,
             # so the count of the accumulated objects is insufficient.  In that case,
             # need to make a call to queryset.count.
             count = filtered_queryset.count()
-
-            page = params.get_as('page', int, 0)
-            if page > 0:
-                meta['prev'] = self.build_page_uri(ctx, page - 1)
-
-            meta['count'] = count
-
-            if (page + 1) * self.page_size < count:
-                meta['next'] = self.build_page_uri(ctx, page + 1)
+            meta = self.paginate(ctx, params, count)
         else:
             # When paging is disabled the sliced_queryset is the complete queryset,
             # so the accumulated objects contains all the objects.  In this case, just
             # do a len on the accumulated objects to avoid the extra COUNT(*) query.
+            meta = dict()
             meta['count'] = len(objects)
 
         # add meta-level resourceUri to QuerySet response
         if self.resource_path is not None:
             meta['resourceUri'] = ctx.build_resource_uri(self)
+
 
         return {
             'meta': meta,
