@@ -4,7 +4,6 @@ from savory_pie.formatters import JSONFormatter
 
 from mock import Mock
 
-
 def mock_context():
     @contextlib.contextmanager
     def target(*args):
