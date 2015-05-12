@@ -29,6 +29,21 @@ class QuerySet(Mock):
     def __list__(self):
         raise UserWarning(u'Don\'t call list; it will not take advantage of prior prefetch optimizations')
 
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return [self[x] for x in xrange(*key.indices(len(self)))]
+        elif isinstance(key, int):
+            if key < 0:
+                key += len(self)
+            if key >= len(self):
+                raise IndexError("The index {} is out of range.".format(key))
+            return self._elements[key]
+        else:
+            raise TypeError("Invalid argument type.")
+
+    def __len__(self):
+        return len(self._elements)
+
     def all(self):
         return QuerySet(*self._elements)
 

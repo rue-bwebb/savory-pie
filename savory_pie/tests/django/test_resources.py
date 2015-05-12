@@ -447,6 +447,17 @@ class QuerySetResourceTest(unittest.TestCase):
             {'resourceUri': 'uri://users/2', 'name': 'Bob', 'age': 20}
         ])
 
+    # def test_query_set_pagination(self):
+    #     resource = AddressableUserQuerySetResource(mock_orm.QuerySet(
+    #         User(pk=1, name='Alice', age=31),
+    #         User(pk=2, name='Bob', age=20),
+    #         User(pk=3, name='Zak', age=22),
+    #         User(pk=4, name='Dan', age=65)
+    #     ))
+    #     resource.page_size = 4
+    #
+    #     data = resource.get(mock_context(), EmptyParams())
+
     def test_query_set_get_disallow_unfiltered_query(self):
         resource = AddressableUserQuerySetResource(mock_orm.QuerySet(
             User(pk=1, name='Alice', age=31),

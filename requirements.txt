@@ -1,5 +1,5 @@
 # For testing django support
-Django
+Django<=1.6.6
 django_dirty_bits
 
 # Unit testing tools
