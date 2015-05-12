@@ -8,7 +8,7 @@ version = '0.1.3'
 setup(
     name='savory-pie',
     version=version,
-    url='https://github.com/RueLaLa/savory_pie',
+    url='https://github.com/RueLaLa/savory-pie',
     description='A RESTful api libary with support for django',
     license='MIT',
     packages=find_packages(),
