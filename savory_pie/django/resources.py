@@ -119,22 +119,23 @@ class QuerySetResource(Resource):
         # When paging the sliced_queryset will not contain all the objects,
         # so the count of the accumulated objects is insufficient.  In that case,
         # need to make a call to queryset.count.
+
         if not meta:
             meta = dict()
+        if self.supports_paging:
+            page = params.get_as('page', int, 0)
 
-        page = params.get_as('page', int, 0)
+            meta['count'] = count
+            # subtract one from count in case our count is at page size
+            # then add 1 to the number of pages since python rounds down
+            # this should be better than using math.ceil
+            meta['total_pages'] = ((count - 1) / self.page_size) + 1
 
-        meta['count'] = count
-        # subtract one from count in case our count is at page size
-        # then add 1 to the number of pages since python rounds down
-        # this should be better than using math.ceil
-        meta['total_pages'] = ((count - 1) / self.page_size) + 1
+            if page > 0:
+                meta['prev'] = self.build_page_uri(ctx, page - 1)
 
-        if page > 0:
-            meta['prev'] = self.build_page_uri(ctx, page - 1)
-
-        if (page + 1) * self.page_size < count:
-            meta['next'] = self.build_page_uri(ctx, page + 1)
+            if (page + 1) * self.page_size < count:
+                meta['next'] = self.build_page_uri(ctx, page + 1)
 
         return meta
 
@@ -157,7 +158,6 @@ class QuerySetResource(Resource):
             model_json = self.to_resource(model).get(ctx, EmptyParams())
             model_json['$hash'] = get_sha1(ctx, model_json)
             objects.append(model_json)
-
 
         if self.supports_paging:
             # When paging the sliced_queryset will not contain all the objects,
