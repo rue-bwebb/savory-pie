@@ -176,7 +176,6 @@ class QuerySetResource(Resource):
         if self.resource_path is not None:
             meta['resourceUri'] = ctx.build_resource_uri(self)
 
-
         return {
             'meta': meta,
             'objects': objects
