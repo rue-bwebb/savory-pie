@@ -507,10 +507,6 @@ class QuerySetResourceTest(unittest.TestCase):
         ])
 
     def test_empty_queryset(self):
-        #mock_query_set = MagicMock()
-        #mock_query_set.__bool__ = False
-        #mock_query_set.return_value = None
-
         resource = AddressableUserQuerySetResource(mock_orm.QuerySet())
         data = resource.get(mock_context(), EmptyParams())
 
