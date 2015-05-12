@@ -115,17 +115,10 @@ class QuerySetResource(Resource):
                     return True
         return False
 
-    def paginate(self, ctx, params, count, meta=None):
-        # When paging the sliced_queryset will not contain all the objects,
-        # so the count of the accumulated objects is insufficient.  In that case,
-        # need to make a call to queryset.count.
-
-        if not meta:
-            meta = dict()
+    def paginate(self, ctx, params, count, meta):
         if self.supports_paging:
             page = params.get_as('page', int, 0)
 
-            meta['count'] = count
             # subtract one from count in case our count is at page size
             # then add 1 to the number of pages since python rounds down
             # this should be better than using math.ceil
@@ -159,18 +152,10 @@ class QuerySetResource(Resource):
             model_json['$hash'] = get_sha1(ctx, model_json)
             objects.append(model_json)
 
-        if self.supports_paging:
-            # When paging the sliced_queryset will not contain all the objects,
-            # so the count of the accumulated objects is insufficient.  In that case,
-            # need to make a call to queryset.count.
-            count = filtered_queryset.count()
-            meta = self.paginate(ctx, params, count)
-        else:
-            # When paging is disabled the sliced_queryset is the complete queryset,
-            # so the accumulated objects contains all the objects.  In this case, just
-            # do a len on the accumulated objects to avoid the extra COUNT(*) query.
-            meta = dict()
-            meta['count'] = len(objects)
+        meta = dict()
+        count = filtered_queryset.count()
+        meta['count'] = count
+        meta = self.paginate(ctx, params, count, meta)
 
         # add meta-level resourceUri to QuerySet response
         if self.resource_path is not None:
