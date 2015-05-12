@@ -53,6 +53,12 @@ Running Tests Coverage
     coverage html
 ```
 
+Updating PyPi (to whom it may concern)
+-----
+```
+`python setup.py sdist register upload`
+This builds the project, and uploads it to PyPi (credentials needed)
+```
 
 ```
 its a pie, mate
