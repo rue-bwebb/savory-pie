@@ -41,3 +41,6 @@ nosetests.xml
 env
 docs/_build/*
 savory_pie/tests/django/whoosh_index/
+
+# PyPi credentials
+.pypirc
