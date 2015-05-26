@@ -1,5 +1,10 @@
 import exceptions
-import json
+try:
+    import ujson as json
+except ImportError:
+    import warnings
+    warnings.warn('Using plain JSON instead of uJSON, performance may be degraded.')
+    import json
 import pytz
 import datetime
 import re
