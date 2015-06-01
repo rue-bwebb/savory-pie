@@ -19,6 +19,7 @@ http://savory-pie.readthedocs.org/en/latest/
 
 Installing
 ----
+Note: it's recommended that you use `ujson` over the built in `json` library due to increased performance
 ```
     pip install savory-pie
 ```
@@ -55,9 +56,9 @@ Running Tests Coverage
 
 Updating PyPi (to whom it may concern)
 -----
-```
-`python setup.py sdist register upload`
 This builds the project, and uploads it to PyPi (credentials needed)
+```
+python setup.py sdist register upload
 ```
 
 ```
