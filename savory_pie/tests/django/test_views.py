@@ -1,5 +1,10 @@
 import unittest
-import json
+try:
+    import ujson as json
+except ImportError:
+    from warnings import warn
+    warn('Using plain JSON instead of uJSON, performance may be degraded.')
+    import json
 from datetime import datetime
 
 import mock

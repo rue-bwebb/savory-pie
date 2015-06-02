@@ -1,7 +1,12 @@
 from collections import OrderedDict
 from datetime import datetime
 from mock import Mock, MagicMock, call, patch
-import json
+try:
+    import ujson as json
+except ImportError:
+    from warnings import warn
+    warn('Using plain JSON instead of uJSON, performance may be degraded.')
+    import json
 import unittest
 
 from django.contrib.auth.models import User as DjangoUser
