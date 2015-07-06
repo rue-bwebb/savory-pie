@@ -10,7 +10,7 @@ from savory_pie.context import APIContext
 from savory_pie.django import validators
 from savory_pie.errors import AuthorizationError, PreConditionError, MethodNotAllowedError
 from savory_pie.formatters import JSONFormatter
-from savory_pie.newrelic import set_transaction_name
+from savory_pie.savory_newrelic import set_transaction_name
 from savory_pie.helpers import get_sha1, process_get_request, process_post_request, process_put_request, process_delete_request
 
 logger = logging.getLogger(__name__)
