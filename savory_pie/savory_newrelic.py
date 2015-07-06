@@ -5,7 +5,7 @@ try:
     import newrelic.agent as agent
 
     def set_transaction_name(func):
-        @functools.wraps
+        @functools.wraps(func)
         def inner(request, resource_path):
             agent.set_transaction_name(
                 resource_path,
