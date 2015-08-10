@@ -13,9 +13,11 @@ from savory_pie.formatters import JSONFormatter
 from savory_pie.savory_newrelic import set_transaction_name
 from savory_pie.helpers import get_sha1, process_get_request, process_post_request, process_put_request, process_delete_request
 
+from savory_pie.utils import deprecated
+
 logger = logging.getLogger(__name__)
 
-
+@deprecated
 def batch_api_view(root_resource, base_regex):
     """
     View function factory that provides accessing to the resource tree
