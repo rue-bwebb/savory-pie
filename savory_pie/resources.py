@@ -31,37 +31,21 @@ class BasicResource(dict):
 
     def __getattr__(self, item):
         try:
-            # Throws exception if not in prototype chain
-            return object.__getattribute__(self, item)
-        except AttributeError:
-            try:
-                return self[item]
-            except KeyError:
-                raise AttributeError(item)
+            return self[item]
+        except KeyError:
+            raise AttributeError('Accessing undefined attribute {0}'.format(item))
 
     def __setattr__(self, key, value):
         try:
-            # Throws exception if not in prototype chain
-            object.__getattribute__(self, key)
-        except AttributeError:
-            try:
-                self[key] = value
-            except:
-                raise AttributeError(key)
-        else:
-            object.__setattr__(self, key, value)
+            self[key] = value
+        except:
+            raise AttributeError('Unable to set attribute {0}'.format(key))
 
     def __delattr__(self, item):
         try:
-            # Throws exception if not in prototype chain
-            object.__getattribute__(self, item)
-        except AttributeError:
-            try:
-                del self[item]
-            except KeyError:
-                raise AttributeError(item)
-        else:
-            object.__delattr__(self, item)
+            del self[item]
+        except KeyError:
+            raise AttributeError('Unable to delete attribute {0}'.format(item))
 
     @property
     def key(self):
