@@ -702,7 +702,9 @@ class ViewTest(unittest.TestCase):
     # POST methods
     # 
 
-    def test_post_success(self):
+    @mock.patch('savory_pie.django.views.JSONFormatter')
+    def test_post_success(self, formatter):
+        formatter.return_value = formatter
         root_resource = mock_resource(name='root')
         root_resource.allowed_methods.add('POST')
 
@@ -720,6 +722,9 @@ class ViewTest(unittest.TestCase):
             ]
         )
         self.assertEqual(response['Location'], 'http://localhost/api/foo')
+        self.assertTrue(formatter.write_to.called)
+        self.assertEqual(len(formatter.write_to.call_args), 2)
+        self.assertEqual(formatter.write_to.call_args[0][0], new_resource)
         self.assertIsNotNone(root_resource.post.call_args_list[0].request)
 
     def test_post_with_collision_one(self):

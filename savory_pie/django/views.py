@@ -403,6 +403,7 @@ def _validation_errors(ctx, resource, request, errors):
 def _created(ctx, resource, request, new_resource):
     response = HttpResponse(status=201)
     response['Location'] = ctx.build_resource_uri(new_resource)
+    ctx.formatter.write_to(new_resource, response)
     return response
 
 
