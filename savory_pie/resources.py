@@ -95,7 +95,7 @@ class BasicResource(dict):
     @property
     def resource_path(self):
         key = self.key
-        return self.path + '/' + key if key else self.path
+        return "{}/{}".format(self.path, key) if key else self.path
 
     def get_child_resource(self, ctx, param):
         return None
