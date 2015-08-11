@@ -2,9 +2,9 @@ from exceptions import Exception
 
 
 class ApiException(Exception):
-    #
-    # General API exception
-    #
+    """
+    General API exception
+    """
     def __init__(self, message=None, *args, **kwargs):
         self.__dict__.update(kwargs)
         if message:
