@@ -1,11 +1,12 @@
 from datetime import datetime
 import warnings
+import functools
 
 
 def deprecated(deprecated_func):
-
     message = deprecated_func.__name__ + ' is deprecated and is scheduled to be removed in the next major release of the library.'
 
+    @functools.wraps(deprecated_func)
     def temporary_func(*args, **kwargs):
         warnings.warn(message, DeprecationWarning)
         return deprecated_func(*args, **kwargs)
