@@ -21,13 +21,15 @@ class EmptyParams(object):
     def keys(self):
         return []
 
+
 rest_methods = ['GET', 'POST', 'PUT', 'DELETE']
+
 
 class BasicResource(dict):
     published_key = ('id', str)
     path = ''
 
-    def __init__(self, dict = None):
+    def __init__(self, dict=None):
         if dict:
             self.update(dict)
 
@@ -97,7 +99,7 @@ class BasicResource(dict):
     @property
     def resource_path(self):
         key = self.key
-        return self.path + '/' + self.key if self.key else self.path
+        return self.path + '/' + key if key else self.path
 
     def get_child_resource(self, ctx, param):
         return None

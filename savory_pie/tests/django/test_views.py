@@ -547,9 +547,9 @@ class ViewTest(unittest.TestCase):
         self.assertEqual(response_json['validation_errors'], ['Modification of field foo not authorized'])
         self.assertEqual(response.status_code, 403)
 
-    # 
+    #
     # GET methods
-    # 
+    #
 
     def test_get_success(self):
         root_resource = mock_resource(name='root')
@@ -618,9 +618,9 @@ class ViewTest(unittest.TestCase):
         self.assertEqual(content['message'], 'Some kind of server error')
         self.assertTrue(logger.exception.called)
 
-    # 
+    #
     # PUT methods
-    # 
+    #
 
     def test_put_no_content_success(self):
         root_resource = mock_resource(name='root')
@@ -698,9 +698,9 @@ class ViewTest(unittest.TestCase):
         self.assertEqual(content['message'], 'Some kind of server error')
         self.assertTrue(logger.exception.called)
 
-    # 
+    #
     # POST methods
-    # 
+    #
 
     @mock.patch('savory_pie.django.views.JSONFormatter')
     def test_post_success(self, formatter):
@@ -805,9 +805,9 @@ class ViewTest(unittest.TestCase):
 
         self.assertEqual(response.status_code, 405)
 
-    # 
+    #
     # DELETE methods
-    # 
+    #
 
     def test_delete_success(self):
         root_resource = mock_resource(name='root')
@@ -858,9 +858,9 @@ class ViewTest(unittest.TestCase):
         response = savory_dispatch(root_resource, method='GET', resource_path='child/grandchild')
         self.assertEqual(response.status_code, 404)
 
-    # 
+    #
     # Validation handling
-    # 
+    #
 
     def test_validation_handling(self):
         root_resource = mock_resource(name='root')
@@ -881,7 +881,7 @@ class ViewTest(unittest.TestCase):
 
     #
     # Header methods
-    # 
+    #
 
     def test_set_header(self):
         """

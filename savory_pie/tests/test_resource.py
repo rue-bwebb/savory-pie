@@ -74,6 +74,7 @@ class ParamsImplTestCase(unittest.TestCase):
         params = _ParamsImpl({'key1': [1]})
         self.assertEqual(params.get_list_of('key2', str), [])
 
+
 class TestResource(BasicResource):
     path = 'test'
 
@@ -83,11 +84,12 @@ class TestResource(BasicResource):
     def extra_method(self):
         pass
 
+
 class BasicResourceTestCase(unittest.TestCase):
 
     def test_init_empty(self):
         resource = TestResource()
-        
+
         self.assertEqual(resource.key, '')
         self.assertEqual(resource.resource_path, 'test')
         self.assertEqual(resource.allowed_methods, set(['GET']))
@@ -119,4 +121,3 @@ class BasicResourceTestCase(unittest.TestCase):
 
         self.assertEqual(resource.key, data['id'])
         self.assertEqual(resource.resource_path, 'test/' + data['id'])
-

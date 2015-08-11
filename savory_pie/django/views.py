@@ -17,6 +17,7 @@ from savory_pie.utils import deprecated
 
 logger = logging.getLogger(__name__)
 
+
 @deprecated
 def batch_api_view(root_resource, base_regex):
     """

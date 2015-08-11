@@ -1,5 +1,6 @@
 from exceptions import Exception
 
+
 class ApiException(Exception):
     #
     # General API exception
@@ -12,6 +13,7 @@ class ApiException(Exception):
     @property
     def as_json(self):
         return self.__dict__
+
 
 class AuthorizationError(Exception):
 
