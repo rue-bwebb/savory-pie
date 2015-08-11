@@ -1,6 +1,6 @@
 import unittest
 import mock
-from savory_pie.resources import _ParamsImpl, EmptyParams
+from savory_pie.resources import _ParamsImpl, EmptyParams, BasicResource
 
 
 class EmptyParamsTestCase(unittest.TestCase):
@@ -73,3 +73,50 @@ class ParamsImplTestCase(unittest.TestCase):
     def test_get_list_of_not_found(self):
         params = _ParamsImpl({'key1': [1]})
         self.assertEqual(params.get_list_of('key2', str), [])
+
+class TestResource(BasicResource):
+    path = 'test'
+
+    def get(self):
+        pass
+
+    def extra_method(self):
+        pass
+
+class BasicResourceTestCase(unittest.TestCase):
+
+    def test_init_empty(self):
+        resource = TestResource()
+        
+        self.assertEqual(resource.key, '')
+        self.assertEqual(resource.resource_path, 'test')
+        self.assertEqual(resource.allowed_methods, set(['GET']))
+
+    def test_init_with_dict(self):
+        data = {
+            'stringKey': 'stringValue',
+            'numberKey': 1,
+            'arrayKey': ['value1', 'value2', 'value3'],
+            'objectKey': {
+                'key': 'value'
+            }
+        }
+        resource = TestResource(data)
+
+        self.assertEqual(resource.stringKey, data['stringKey'])
+        self.assertEqual(resource.numberKey, data['numberKey'])
+        self.assertEqual(resource.arrayKey, data['arrayKey'])
+        self.assertEqual(resource.objectKey, data['objectKey'])
+        self.assertEqual(resource.key, '')
+        self.assertEqual(resource.resource_path, 'test')
+
+    def test_init_with_dict_and_id(self):
+        data = {
+            'id': '12335'
+        }
+
+        resource = TestResource(data)
+
+        self.assertEqual(resource.key, data['id'])
+        self.assertEqual(resource.resource_path, 'test/' + data['id'])
+

@@ -21,6 +21,87 @@ class EmptyParams(object):
     def keys(self):
         return []
 
+rest_methods = ['GET', 'POST', 'PUT', 'DELETE']
+
+class BasicResource(dict):
+    published_key = ('id', str)
+    path = ''
+
+    def __init__(self, dict = None):
+        if dict:
+            self.update(dict)
+
+    def __getattr__(self, item):
+        try:
+            # Throws exception if not in prototype chain
+            return object.__getattribute__(self, item)
+        except AttributeError:
+            try:
+                return self[item]
+            except KeyError:
+                raise AttributeError(item)
+
+    def __setattr__(self, key, value):
+        try:
+            # Throws exception if not in prototype chain
+            object.__getattribute__(self, key)
+        except AttributeError:
+            try:
+                self[key] = value
+            except:
+                raise AttributeError(key)
+        else:
+            object.__setattr__(self, key, value)
+
+    def __delattr__(self, item):
+        try:
+            # Throws exception if not in prototype chain
+            object.__getattribute__(self, item)
+        except AttributeError:
+            try:
+                del self[item]
+            except KeyError:
+                raise AttributeError(item)
+        else:
+            object.__delattr__(self, item)
+
+    @property
+    def key(self):
+        attr, type_ = self.published_key
+        try:
+            return type_(getattr(self, attr))
+        except AttributeError:
+            return type_('')
+
+    @property
+    def allowed_methods(self):
+        """
+        defaults to set of available methods based on
+        presence of the optional methods - get, post, put, etc.
+
+        Can be overridden with a static set or dynamic property to
+        create access controls.
+        """
+        allowed_methods = set()
+
+        for http_method in rest_methods:
+            obj_method = http_method.lower()
+            try:
+                getattr(self, obj_method)
+                allowed_methods.add(http_method)
+            except AttributeError:
+                pass
+
+        return allowed_methods
+
+    @property
+    def resource_path(self):
+        key = self.key
+        return self.path + '/' + self.key if self.key else self.path
+
+    def get_child_resource(self, ctx, param):
+        return None
+
 
 class Resource(object):
     """
