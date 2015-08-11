@@ -29,10 +29,6 @@ class BasicResource(dict):
     published_key = ('id', str)
     path = ''
 
-    def __init__(self, dict=None):
-        if dict:
-            self.update(dict)
-
     def __getattr__(self, item):
         try:
             # Throws exception if not in prototype chain
