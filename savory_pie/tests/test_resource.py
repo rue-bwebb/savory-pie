@@ -121,3 +121,20 @@ class BasicResourceTestCase(unittest.TestCase):
 
         self.assertEqual(resource.key, data['id'])
         self.assertEqual(resource.resource_path, 'test/' + data['id'])
+
+    def test_update(self):
+        resource = TestResource()
+
+        resource.field = 'string'
+
+        self.assertEqual(resource.field, 'string')
+        self.assertEqual(resource['field'], 'string')
+
+    def test_delete(self):
+        resource = TestResource({
+                'field': 123
+            })
+
+        del resource.field
+
+        self.assertNotIn('field', resource)
