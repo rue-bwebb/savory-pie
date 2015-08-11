@@ -105,10 +105,7 @@ class BasicResourceTestCase(unittest.TestCase):
         }
         resource = TestResource(data)
 
-        self.assertEqual(resource.stringKey, data['stringKey'])
-        self.assertEqual(resource.numberKey, data['numberKey'])
-        self.assertEqual(resource.arrayKey, data['arrayKey'])
-        self.assertEqual(resource.objectKey, data['objectKey'])
+        self.assertDictEqual(data, resource)
         self.assertEqual(resource.key, '')
         self.assertEqual(resource.resource_path, 'test')
 
