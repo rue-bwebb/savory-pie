@@ -1,6 +1,6 @@
 import unittest
 import mock
-from savory_pie.resources import _ParamsImpl, EmptyParams, BasicResource
+from savory_pie.resources import _ParamsImpl, EmptyParams, BasicResource, Resource
 
 
 class EmptyParamsTestCase(unittest.TestCase):
@@ -75,7 +75,7 @@ class ParamsImplTestCase(unittest.TestCase):
         self.assertEqual(params.get_list_of('key2', str), [])
 
 
-class TestResource(BasicResource):
+class TestBasicResource(BasicResource):
     path = 'test'
 
     def get(self):
@@ -88,11 +88,12 @@ class TestResource(BasicResource):
 class BasicResourceTestCase(unittest.TestCase):
 
     def test_init_empty(self):
-        resource = TestResource()
+        resource = TestBasicResource()
 
         self.assertEqual(resource.key, '')
         self.assertEqual(resource.resource_path, 'test')
         self.assertEqual(resource.allowed_methods, set(['GET']))
+        self.assertIsNone(resource.get_child_resource({}, False))
 
     def test_init_with_dict(self):
         data = {
@@ -103,7 +104,7 @@ class BasicResourceTestCase(unittest.TestCase):
                 'key': 'value'
             }
         }
-        resource = TestResource(data)
+        resource = TestBasicResource(data)
 
         self.assertDictEqual(data, resource)
         self.assertEqual(resource.key, '')
@@ -114,13 +115,13 @@ class BasicResourceTestCase(unittest.TestCase):
             'id': '12335'
         }
 
-        resource = TestResource(data)
+        resource = TestBasicResource(data)
 
         self.assertEqual(resource.key, data['id'])
         self.assertEqual(resource.resource_path, 'test/' + data['id'])
 
     def test_update(self):
-        resource = TestResource()
+        resource = TestBasicResource()
 
         resource.field = 'string'
 
@@ -128,10 +129,42 @@ class BasicResourceTestCase(unittest.TestCase):
         self.assertEqual(resource['field'], 'string')
 
     def test_delete(self):
-        resource = TestResource({
+        resource = TestBasicResource({
             'field': 123
         })
 
         del resource.field
 
         self.assertNotIn('field', resource)
+
+    def test_access_invalid_attribute(self):
+        resource = TestBasicResource()
+
+        with self.assertRaises(AttributeError):
+            resource.field
+
+    def test_delete_invalid_attribute(self):
+        resource = TestBasicResource()
+
+        with self.assertRaises(AttributeError):
+            del resource.path
+
+
+class TestResource(Resource):
+    resource_path = 'resource_path'
+
+    def get(self):
+        pass
+
+    def extra_method(self):
+        pass
+
+
+class ResourceTestCase(unittest.TestCase):
+
+    def test_init(self):
+        resource = TestResource()
+
+        self.assertEqual(resource.resource_path, 'resource_path')
+        self.assertEqual(resource.allowed_methods, set(['GET']))
+        self.assertIsNone(resource.get_child_resource({}, False))
