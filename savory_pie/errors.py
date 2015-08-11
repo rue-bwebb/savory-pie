@@ -1,6 +1,20 @@
 from exceptions import Exception
 
 
+class ApiException(Exception):
+    """
+    General API exception
+    """
+    def __init__(self, message=None, *args, **kwargs):
+        self.__dict__.update(kwargs)
+        if message:
+            self.message = message
+
+    @property
+    def as_json(self):
+        return self.__dict__
+
+
 class AuthorizationError(Exception):
 
     def __init__(self, name='', *args, **kwargs):

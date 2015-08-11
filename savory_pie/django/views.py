@@ -8,14 +8,17 @@ from django.utils.datastructures import MultiValueDict
 
 from savory_pie.context import APIContext
 from savory_pie.django import validators
-from savory_pie.errors import AuthorizationError, PreConditionError, MethodNotAllowedError
+from savory_pie.errors import AuthorizationError, PreConditionError, MethodNotAllowedError, ApiException
 from savory_pie.formatters import JSONFormatter
 from savory_pie.savory_newrelic import set_transaction_name
 from savory_pie.helpers import get_sha1, process_get_request, process_post_request, process_put_request, process_delete_request
 
+from savory_pie.utils import deprecated
+
 logger = logging.getLogger(__name__)
 
 
+@deprecated
 def batch_api_view(root_resource, base_regex):
     """
     View function factory that provides accessing to the resource tree
@@ -172,10 +175,9 @@ def batch_api_view(root_resource, base_regex):
 
             return _content_success(ctx, None, request, {'data': result})
 
-        except Exception:
-            import traceback
-            logger.exception('Caught Exception in API')
-            return _internal_error(ctx, request, traceback.format_exc())
+        except Exception as e:
+            logger.exception('Caught Exception in API', e)
+            return _internal_error(ctx, request, ApiException(e.message))
 
     return view
 
@@ -234,10 +236,12 @@ def api_view(root_resource):
                 return _not_allowed_method(ctx, resource, request)
         except AuthorizationError as e:
             return _access_denied(ctx, field_name=e.name)
-        except Exception:
-            import traceback
+        except ApiException as e:
+            logger.error('Caught general ApiException', e.message)
+            return _internal_error(ctx, request, e)
+        except Exception as e:
             logger.exception('Caught Exception in API')
-            return _internal_error(ctx, request, traceback.format_exc())
+            return _internal_error(ctx, request, ApiException(e.message))
 
     return view
 
@@ -400,6 +404,7 @@ def _validation_errors(ctx, resource, request, errors):
 def _created(ctx, resource, request, new_resource):
     response = HttpResponse(status=201)
     response['Location'] = ctx.build_resource_uri(new_resource)
+    ctx.formatter.write_to(new_resource, response)
     return response
 
 
@@ -435,8 +440,7 @@ def _success(ctx, resource, request, content_dict=None):
 
 def _internal_error(ctx, request, error):
     response = HttpResponse(status=500, content_type=ctx.formatter.content_type)
-    error_body = {ctx.formatter.convert_to_public_property('error'): error}
-    ctx.formatter.write_to(error_body, response)
+    ctx.formatter.write_to(error.as_json, response)
     return response
 
 

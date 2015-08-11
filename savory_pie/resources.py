@@ -22,6 +22,66 @@ class EmptyParams(object):
         return []
 
 
+rest_methods = ['GET', 'POST', 'PUT', 'DELETE']
+
+
+class BasicResource(dict):
+    published_key = ('id', str)
+    path = ''
+
+    def __getattr__(self, item):
+        try:
+            return self[item]
+        except KeyError:
+            raise AttributeError('Accessing undefined attribute {0}'.format(item))
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
+    def __delattr__(self, item):
+        try:
+            del self[item]
+        except KeyError:
+            raise AttributeError('Unable to delete attribute {0}'.format(item))
+
+    @property
+    def key(self):
+        attr, type_ = self.published_key
+        try:
+            return type_(getattr(self, attr))
+        except AttributeError:
+            return type_('')
+
+    @property
+    def allowed_methods(self):
+        """
+        defaults to set of available methods based on
+        presence of the optional methods - get, post, put, etc.
+
+        Can be overridden with a static set or dynamic property to
+        create access controls.
+        """
+        allowed_methods = set()
+
+        for http_method in rest_methods:
+            obj_method = http_method.lower()
+            try:
+                getattr(self, obj_method)
+                allowed_methods.add(http_method)
+            except AttributeError:
+                pass
+
+        return allowed_methods
+
+    @property
+    def resource_path(self):
+        key = self.key
+        return "{}/{}".format(self.path, key) if key else self.path
+
+    def get_child_resource(self, ctx, param):
+        return None
+
+
 class Resource(object):
     """
     Base object for defining resources.

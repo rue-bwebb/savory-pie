@@ -9,7 +9,7 @@ from datetime import datetime
 
 import mock
 from mock import Mock, patch
-from savory_pie.errors import AuthorizationError, PreConditionError
+from savory_pie.errors import AuthorizationError, PreConditionError, ApiException
 from savory_pie.formatters import JSONFormatter
 from savory_pie.resources import _ParamsImpl
 from savory_pie.helpers import get_sha1
@@ -547,6 +547,10 @@ class ViewTest(unittest.TestCase):
         self.assertEqual(response_json['validation_errors'], ['Modification of field foo not authorized'])
         self.assertEqual(response.status_code, 403)
 
+    #
+    # GET methods
+    #
+
     def test_get_success(self):
         root_resource = mock_resource(name='root')
         root_resource.allowed_methods.add('GET')
@@ -585,6 +589,38 @@ class ViewTest(unittest.TestCase):
 
         response = savory_dispatch(root_resource, method='GET')
         self.assertEqual(response.status_code, 405)
+
+    @mock.patch('savory_pie.django.views.logger')
+    def test_get_with_apiexception(self, logger):
+        root_resource = mock_resource(name='root')
+        root_resource.allowed_methods.add('GET')
+
+        root_resource.get = Mock(side_effect=ApiException('Some kind of server error'))
+
+        response = savory_dispatch(root_resource, method='GET')
+        self.assertEqual(response.status_code, 500)
+        content = json.loads(response.content)
+        self.assertTrue('message' in content)
+        self.assertEqual(content['message'], 'Some kind of server error')
+        self.assertTrue(logger.error.called)
+
+    @mock.patch('savory_pie.django.views.logger')
+    def test_get_with_exception(self, logger):
+        root_resource = mock_resource(name='root')
+        root_resource.allowed_methods.add('GET')
+
+        root_resource.get = Mock(side_effect=Exception('Some kind of server error'))
+
+        response = savory_dispatch(root_resource, method='GET')
+        self.assertEqual(response.status_code, 500)
+        content = json.loads(response.content)
+        self.assertTrue('message' in content)
+        self.assertEqual(content['message'], 'Some kind of server error')
+        self.assertTrue(logger.exception.called)
+
+    #
+    # PUT methods
+    #
 
     def test_put_no_content_success(self):
         root_resource = mock_resource(name='root')
@@ -634,7 +670,41 @@ class ViewTest(unittest.TestCase):
         response = savory_dispatch(root_resource, method='PUT', body='{}')
         self.assertEqual(response.status_code, 405)
 
-    def test_post_success(self):
+    @mock.patch('savory_pie.django.views.logger')
+    def test_put_with_apiexception(self, logger):
+        root_resource = mock_resource(name='root')
+        root_resource.allowed_methods.add('PUT')
+
+        root_resource.put = Mock(side_effect=ApiException('Some kind of server error'))
+
+        response = savory_dispatch(root_resource, method='PUT', body='{"foo": "bar"}')
+        self.assertEqual(response.status_code, 500)
+        content = json.loads(response.content)
+        self.assertTrue('message' in content)
+        self.assertEqual(content['message'], 'Some kind of server error')
+        self.assertTrue(logger.error.called)
+
+    @mock.patch('savory_pie.django.views.logger')
+    def test_put_with_exception(self, logger):
+        root_resource = mock_resource(name='root')
+        root_resource.allowed_methods.add('PUT')
+
+        root_resource.put = Mock(side_effect=Exception('Some kind of server error'))
+
+        response = savory_dispatch(root_resource, method='PUT', body='{"foo": "bar"}')
+        self.assertEqual(response.status_code, 500)
+        content = json.loads(response.content)
+        self.assertTrue('message' in content)
+        self.assertEqual(content['message'], 'Some kind of server error')
+        self.assertTrue(logger.exception.called)
+
+    #
+    # POST methods
+    #
+
+    @mock.patch('savory_pie.django.views.JSONFormatter')
+    def test_post_success(self, formatter):
+        formatter.return_value = formatter
         root_resource = mock_resource(name='root')
         root_resource.allowed_methods.add('POST')
 
@@ -652,6 +722,9 @@ class ViewTest(unittest.TestCase):
             ]
         )
         self.assertEqual(response['Location'], 'http://localhost/api/foo')
+        self.assertTrue(formatter.write_to.called)
+        self.assertEqual(len(formatter.write_to.call_args), 2)
+        self.assertEqual(formatter.write_to.call_args[0][0], new_resource)
         self.assertIsNotNone(root_resource.post.call_args_list[0].request)
 
     def test_post_with_collision_one(self):
@@ -704,10 +777,26 @@ class ViewTest(unittest.TestCase):
         response = savory_dispatch(root_resource, method='POST', body='{}')
         self.assertEqual(response.status_code, 500)
         content = json.loads(response.content)
-        self.assertTrue('error' in content)
-        self.assertTrue(content['error'].startswith('Traceback (most recent call last):'))
-        self.assertTrue('Some kind of server error' in content['error'])
+        self.assertTrue('message' in content)
+        self.assertEqual(content['message'], 'Some kind of server error')
         self.assertTrue(logger.exception.called)
+
+    @mock.patch('savory_pie.django.views.logger')
+    def test_post_with_apiexception(self, logger):
+        root_resource = mock_resource(name='root')
+        root_resource.allowed_methods.add('POST')
+
+        def side_effect(*args):
+            raise ApiException('Some kind of server error')
+
+        root_resource.post = Mock(side_effect=side_effect)
+
+        response = savory_dispatch(root_resource, method='POST', body='{}')
+        self.assertEqual(response.status_code, 500)
+        content = json.loads(response.content)
+        self.assertTrue('message' in content)
+        self.assertEqual(content['message'], 'Some kind of server error')
+        self.assertTrue(logger.error.called)
 
     def test_post_not_supported(self):
         root_resource = mock_resource(name='root')
@@ -715,6 +804,10 @@ class ViewTest(unittest.TestCase):
         response = savory_dispatch(root_resource, method='POST', body='{}')
 
         self.assertEqual(response.status_code, 405)
+
+    #
+    # DELETE methods
+    #
 
     def test_delete_success(self):
         root_resource = mock_resource(name='root')
@@ -765,16 +858,9 @@ class ViewTest(unittest.TestCase):
         response = savory_dispatch(root_resource, method='GET', resource_path='child/grandchild')
         self.assertEqual(response.status_code, 404)
 
-    def test_exception_handling(self):
-        root_resource = mock_resource(name='root')
-        root_resource.allowed_methods.add('GET')
-        root_resource.get.side_effect = Exception('Fail')
-
-        response = savory_dispatch(root_resource, method='GET')
-
-        response_json = json.loads(response.content)
-        self.assertIn('error', response_json)
-        self.assertEqual(response.status_code, 500)
+    #
+    # Validation handling
+    #
 
     def test_validation_handling(self):
         root_resource = mock_resource(name='root')
@@ -792,6 +878,10 @@ class ViewTest(unittest.TestCase):
         self.assertIn('validation_errors', response_json)
         self.assertEqual(response_json['validation_errors']['class.field'], 'broken')
         self.assertEqual(response.status_code, 400)
+
+    #
+    # Header methods
+    #
 
     def test_set_header(self):
         """
