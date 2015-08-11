@@ -48,7 +48,7 @@ class APIContext(object):
             cur_resource_path = cur_resource_path + '/' + path_fragment
             resource = resource.get_child_resource(self, path_fragment)
 
-            if not resource:
+            if resource is None:
                 return None
 
             if resource.resource_path is None:
