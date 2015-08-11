@@ -4,7 +4,7 @@ import functools
 
 
 def deprecated(deprecated_func):
-    message = deprecated_func.__name__ + ' is deprecated and is scheduled to be removed in the next major release of the library.'
+    message = '{0} is deprecated and is scheduled to be removed in the next major release of the library.'.format(deprecated_func.__name__)
 
     @functools.wraps(deprecated_func)
     def temporary_func(*args, **kwargs):
