@@ -129,8 +129,8 @@ class BasicResourceTestCase(unittest.TestCase):
 
     def test_delete(self):
         resource = TestResource({
-                'field': 123
-            })
+            'field': 123
+        })
 
         del resource.field
 
