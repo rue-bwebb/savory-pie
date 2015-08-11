@@ -36,10 +36,7 @@ class BasicResource(dict):
             raise AttributeError('Accessing undefined attribute {0}'.format(item))
 
     def __setattr__(self, key, value):
-        try:
-            self[key] = value
-        except:
-            raise AttributeError('Unable to set attribute {0}'.format(key))
+        self[key] = value
 
     def __delattr__(self, item):
         try:
