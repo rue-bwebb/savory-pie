@@ -3,7 +3,8 @@
 from setuptools import setup
 from setuptools import find_packages
 
-version = '0.1.6'
+version = '0.1.6.1'
+>>>>>>> 3d82d15... Reducing noise in NewRelic reporting...
 
 setup(
     name='savory-pie',
