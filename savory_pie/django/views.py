@@ -248,8 +248,9 @@ def _strip_query_string(path):
 
 def _database_transaction_batch(func):
     @functools.wraps(func)
-    @transaction.commit_manually
     def inner(ctx, resource, request, func=func):
+        app_autocommit_flag = transaction.get_autocommit()
+        transaction.set_autocommit(False)
         try:
             response = func(ctx, resource, request)
             if 200 <= response.get('status', 500) < 300:
@@ -259,6 +260,9 @@ def _database_transaction_batch(func):
         except:
             transaction.rollback()
             raise
+        finally:
+            transaction.set_autocommit(app_autocommit_flag)
+
         return response
 
     def outer(ctx, resource, request):
@@ -271,8 +275,9 @@ def _database_transaction_batch(func):
 
 def _database_transaction(func):
     @functools.wraps(func)
-    @transaction.commit_manually
     def inner(ctx, resource, request, func=func):
+        app_autocommit_flag = transaction.get_autocommit()
+        transaction.set_autocommit(False)
         try:
             response = func(ctx, resource, request)
             if 200 <= response.status_code < 300:
@@ -282,6 +287,9 @@ def _database_transaction(func):
         except:
             transaction.rollback()
             raise
+        finally:
+            transaction.set_autocommit(app_autocommit_flag)
+
         return response
 
     def outer(ctx, resource, request):

@@ -404,16 +404,13 @@ class BatchViewTest(unittest.TestCase):
         self.assertEqual(data[0]['status'], 400)
         self.assertEqual(data[0]['validation_errors'], {'class.field': 'broken'})
 
-    @mock.patch('django.db.transaction.enter_transaction_management')
-    def test_post_with_collision_two_batch(self, enter):
+    def test_post_with_collision_two_batch(self):
         def side_effect(*args, **kwargs):
             # This could occur if a slightly earlier POST or PUT still had
             # the database locked during a DB transaction.
             from django.db.transaction import TransactionManagementError
 
             raise TransactionManagementError()
-
-        enter.side_effect = side_effect
 
         child_resource = mock_resource(name='child')
         root_resource = mock_resource(
@@ -423,6 +420,7 @@ class BatchViewTest(unittest.TestCase):
         )
         child_resource.allowed_methods.add('POST')
         child_resource.get.side_effect = AuthorizationError('foo')
+        child_resource.post = side_effect
 
         request_data = {
             "data": [
@@ -671,8 +669,7 @@ class ViewTest(unittest.TestCase):
         self.assertEqual(response.status_code, 409)
         self.assertEqual(response.content, '{"resource": "http://localhost/api/"}')
 
-    @mock.patch('django.db.transaction.enter_transaction_management')
-    def test_post_with_collision_two(self, enter):
+    def test_post_with_collision_two(self):
         def side_effect(*args, **kwargs):
             # This could occur if a slightly earlier POST or PUT still had
             # the database locked during a DB transaction.
@@ -680,11 +677,10 @@ class ViewTest(unittest.TestCase):
 
             raise TransactionManagementError()
 
-        enter.side_effect = side_effect
-
         root_resource = mock_resource(name='root')
         new_resource = mock_resource(name='new', resource_path='foo')
         root_resource.post = Mock(return_value=new_resource)
+        root_resource.post.side_effect = side_effect
         root_resource.allowed_methods.add('POST')
 
         response = savory_dispatch(root_resource, method='POST', body='{}')
