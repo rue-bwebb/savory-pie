@@ -257,11 +257,12 @@ def _database_transaction_batch(func):
                 transaction.commit()
             else:
                 transaction.rollback()
-            transaction.set_autocommit(app_autocommit_flag)
         except:
             transaction.rollback()
-            transaction.set_autocommit(app_autocommit_flag)
             raise
+        finally:
+            transaction.set_autocommit(app_autocommit_flag)
+
         return response
 
     def outer(ctx, resource, request):
@@ -283,11 +284,12 @@ def _database_transaction(func):
                 transaction.commit()
             else:
                 transaction.rollback()
-            transaction.set_autocommit(app_autocommit_flag)
         except:
             transaction.rollback()
-            transaction.set_autocommit(app_autocommit_flag)
             raise
+        finally:
+            transaction.set_autocommit(app_autocommit_flag)
+
         return response
 
     def outer(ctx, resource, request):
