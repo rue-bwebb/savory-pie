@@ -264,10 +264,9 @@ def _database_transaction_batch(func):
                     # force a rollback
                     raise _RequestError
         except _RequestError:
-            # Allow the response to be returned.
-            pass
-        except:
-            raise
+            # The transaction should be rolled back
+            # return the response
+            return response
 
         return response
 
@@ -289,10 +288,9 @@ def _database_transaction(func):
                     # force a rollback
                     raise _RequestError
         except _RequestError:
-            # Allow the response to be returned
-            pass
-        except:
-            raise
+            # The transaction should be rolled back
+            # return the response
+            return response
 
         return response
 
