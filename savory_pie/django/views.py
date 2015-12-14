@@ -2,7 +2,7 @@ import functools
 import logging
 import re
 
-from django.db import transaction
+from django.db import transaction, DatabaseError
 from django.http import HttpResponse, StreamingHttpResponse, HttpRequest
 from django.utils.datastructures import MultiValueDict
 
@@ -246,22 +246,27 @@ def _strip_query_string(path):
     return path.split('?', 1)[0]
 
 
+class _RequestError(DatabaseError):
+    """
+    An error that will get raised when an endpoint returns anything other than 200 level response code.
+    Since this is a subclass of `DatabaseError`, raising this error will cause the atomic block to rollback the changes.
+    """
+    pass
+
+
 def _database_transaction_batch(func):
     @functools.wraps(func)
     def inner(ctx, resource, request, func=func):
-        app_autocommit_flag = transaction.get_autocommit()
-        transaction.set_autocommit(False)
         try:
-            response = func(ctx, resource, request)
-            if 200 <= response.get('status', 500) < 300:
-                transaction.commit()
-            else:
-                transaction.rollback()
-        except:
-            transaction.rollback()
-            raise
-        finally:
-            transaction.set_autocommit(app_autocommit_flag)
+            with transaction.atomic():
+                response = func(ctx, resource, request)
+                if not 200 <= response.get('status', 500) < 300:
+                    # force a rollback
+                    raise _RequestError
+        except _RequestError:
+            # The transaction should be rolled back
+            # return the response
+            return response
 
         return response
 
@@ -276,19 +281,16 @@ def _database_transaction_batch(func):
 def _database_transaction(func):
     @functools.wraps(func)
     def inner(ctx, resource, request, func=func):
-        app_autocommit_flag = transaction.get_autocommit()
-        transaction.set_autocommit(False)
         try:
-            response = func(ctx, resource, request)
-            if 200 <= response.status_code < 300:
-                transaction.commit()
-            else:
-                transaction.rollback()
-        except:
-            transaction.rollback()
-            raise
-        finally:
-            transaction.set_autocommit(app_autocommit_flag)
+            with transaction.atomic():
+                response = func(ctx, resource, request)
+                if not 200 <= response.status_code < 300:
+                    # force a rollback
+                    raise _RequestError
+        except _RequestError:
+            # The transaction should be rolled back
+            # return the response
+            return response
 
         return response
 
