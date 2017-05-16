@@ -18,6 +18,7 @@ from savory_pie.tests.django.mock_request import savory_dispatch
 class User(mock_orm.Model):
     pass
 
+
 # Need to mock early, QuerySetResource "rightly" assumes it can call all immediately.
 User.objects.all = Mock(return_value=mock_orm.QuerySet(
     User(pk=1, name='Alice', age=31),
