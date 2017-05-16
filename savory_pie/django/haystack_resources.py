@@ -1,5 +1,4 @@
-import haystack.inputs
-
+from haystack.inputs import AutoQuery
 from haystack.query import SearchQuerySet
 
 from savory_pie.resources import Resource
@@ -21,7 +20,7 @@ class HaystackSearchResource(Resource):
         ctx.streaming_response = True
         qs = SearchQuerySet().models(self.model_class)
         if 'q' in params:
-            qs = qs.filter(content=haystack.inputs.AutoQuery(params.get('q')))
+            qs = qs.filter(content=AutoQuery(params.get('q')))
         qs = self._filter_qs(params, qs)
 
         def result(qs):
