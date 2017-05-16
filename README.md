@@ -5,7 +5,7 @@ you need. Currently Django is the main target, but the only dependencies on
 Django are a single view and Resources and Fields that understand Django's ORM.
 
 
-[![Build Status](https://travis-ci.org/RueLaLaTech/savory-pie.svg?branch=master)](https://travis-ci.org/RueLaLa/savory-pie) 
+[![Build Status](https://travis-ci.org/RueLaLaTech/savory-pie.svg?branch=master)](https://travis-ci.org/RueLaLaTech/savory-pie) 
 [![Coverage Status](https://coveralls.io/repos/RueLaLa/savory-pie/badge.svg?branch=master&service=github)](https://coveralls.io/github/RueLaLa/savory-pie?branch=master)
 
 [![PyPI version](https://img.shields.io/pypi/v/savory-pie.svg)](https://pypi.python.org/pypi/savory-pie/)
