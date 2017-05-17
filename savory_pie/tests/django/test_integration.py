@@ -50,7 +50,7 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             json.loads(response.content),
-            {u'resourceUri': u'http://localhost/api/users/1',
+            {u'resourceUri': u'//localhost/api/users/1',
              u'age': 31,
              u'name': 'Alice'}
         )

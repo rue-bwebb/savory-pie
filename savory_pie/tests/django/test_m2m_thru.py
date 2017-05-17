@@ -146,7 +146,7 @@ class ManyToManyThroughTest(unittest.TestCase):
         ctx = mock_context()
 
         def resolve(*args):
-            prefix = 'http://localhost:8000/api/'
+            prefix = '//localhost:8000/api/'
             self.assertTrue(args[0].startswith(prefix))
             arg = args[0][len(prefix):]
             if arg.startswith('group/'):
@@ -162,8 +162,8 @@ class ManyToManyThroughTest(unittest.TestCase):
 
         ctx.resolve_resource_uri = resolve
         source_dict = {
-            'groups': [{'resourceUri': 'http://localhost:8000/api/group/1', 'name': 'Boy Scouts'}],
-            'resourceUri': 'http://localhost:8000/api/person/1',
+            'groups': [{'resourceUri': '//localhost:8000/api/group/1', 'name': 'Boy Scouts'}],
+            'resourceUri': '//localhost:8000/api/person/1',
             'name': 'Charlie'
         }
         resource = PersonResource(_people[0])
@@ -174,4 +174,4 @@ class ManyToManyThroughTest(unittest.TestCase):
         self.assertEqual({'resourceUri': 'uri://groups/1',
                           'name': 'Boy Scouts',
                           '$hash': 'a35a8e769bb1583a840525d1e8fd6b3d02658b04'},
-                         resource.get(ctx, {'resourceUri': 'http://localhost:8000/api/group/1'}))
+                         resource.get(ctx, {'resourceUri': '//localhost:8000/api/group/1'}))

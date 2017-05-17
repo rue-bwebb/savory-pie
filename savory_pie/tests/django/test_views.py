@@ -93,7 +93,7 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'put',
-                    'http://localhost:8081/api/v2/child/grandchild',
+                    '//localhost:8081/api/v2/child/grandchild',
                     {'business_id': 12345}
                 )
             ]
@@ -111,7 +111,7 @@ class BatchViewTest(unittest.TestCase):
 
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['status'], 204)
-        self.assertEqual(data[0]['uri'], 'http://localhost:8081/api/v2/child/grandchild')
+        self.assertEqual(data[0]['uri'], '//localhost:8081/api/v2/child/grandchild')
         self.assertTrue('data' not in data[0])
 
     def test_put_batch(self):
@@ -124,7 +124,7 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'put',
-                    'http://localhost:8081/api/v2/child/grandchild',
+                    '//localhost:8081/api/v2/child/grandchild',
                     {'business_id': 12345}
                 )
             ]
@@ -142,7 +142,7 @@ class BatchViewTest(unittest.TestCase):
 
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['status'], 200)
-        self.assertEqual(data[0]['uri'], 'http://localhost:8081/api/v2/child/grandchild')
+        self.assertEqual(data[0]['uri'], '//localhost:8081/api/v2/child/grandchild')
         self.assertEqual(data[0]['data'], {u'name': u'value'})
 
     def test_put_precondition_batch(self):
@@ -159,7 +159,7 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'put',
-                    'http://localhost:8081/api/v2/',
+                    '//localhost:8081/api/v2/',
                     {'business_id': 12345}
                 )
             ]
@@ -190,7 +190,7 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'put',
-                    'http://localhost:8081/api/v2/',
+                    '//localhost:8081/api/v2/',
                     {'business_id': 12345}
                 )
             ]
@@ -218,7 +218,7 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'get',
-                    'http://localhost:8081/api/v2/child/grandchild',
+                    '//localhost:8081/api/v2/child/grandchild',
                     {'business_id': 12345}
                 )
             ]
@@ -236,7 +236,7 @@ class BatchViewTest(unittest.TestCase):
 
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['status'], 200)
-        self.assertEqual(data[0]['uri'], 'http://localhost:8081/api/v2/child/grandchild')
+        self.assertEqual(data[0]['uri'], '//localhost:8081/api/v2/child/grandchild')
         self.assertEqual(data[0]['data'], {u'name': u'value'})
 
         ctx = mock_context()
@@ -253,7 +253,7 @@ class BatchViewTest(unittest.TestCase):
         )
         request_data = {
             "data": [
-                self._generate_batch_partial('post', 'http://localhost:8081/api/v2/child/grandchild', {})
+                self._generate_batch_partial('post', '//localhost:8081/api/v2/child/grandchild', {})
             ]
         }
         body = json.dumps(request_data)
@@ -272,8 +272,8 @@ class BatchViewTest(unittest.TestCase):
 
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]['status'], 201)
-        self.assertEqual(data[0]['uri'], 'http://localhost:8081/api/v2/child/grandchild')
-        self.assertEqual(data[0]['location'], 'http://localhost:8081/api/v2/grand_child_path')
+        self.assertEqual(data[0]['uri'], '//localhost:8081/api/v2/child/grandchild')
+        self.assertEqual(data[0]['location'], '//localhost:8081/api/v2/grand_child_path')
 
     @patch('traceback.format_exc')
     def test_exception_in_batch(self, format_exc):
@@ -290,7 +290,7 @@ class BatchViewTest(unittest.TestCase):
 
         request_data = {
             "data": [
-                self._generate_batch_partial('get', 'http://localhost:8081/api/v2/', {'business_id': 12345})
+                self._generate_batch_partial('get', '//localhost:8081/api/v2/', {'business_id': 12345})
             ]
         }
         body = json.dumps(request_data)
@@ -319,7 +319,7 @@ class BatchViewTest(unittest.TestCase):
 
         request_data = {
             "data": [
-                self._generate_batch_partial('get', 'http://localhost:8081/api/v2/child', {'business_id': 12345})
+                self._generate_batch_partial('get', '//localhost:8081/api/v2/child', {'business_id': 12345})
             ]
         }
         body = json.dumps(request_data)
@@ -349,7 +349,7 @@ class BatchViewTest(unittest.TestCase):
 
         request_data = {
             "data": [
-                self._generate_batch_partial('get', 'http://localhost:8081/api/v2/', {'business_id': 12345})
+                self._generate_batch_partial('get', '//localhost:8081/api/v2/', {'business_id': 12345})
             ]
         }
         body = json.dumps(request_data)
@@ -385,7 +385,7 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'post',
-                    'http://localhost:8081/api/v2/',
+                    '//localhost:8081/api/v2/',
                     {'business_id': 12345}
                 )
             ]
@@ -424,7 +424,7 @@ class BatchViewTest(unittest.TestCase):
 
         request_data = {
             "data": [
-                self._generate_batch_partial('post', 'http://localhost:8081/api/v2/child', {'id ': 12345})
+                self._generate_batch_partial('post', '//localhost:8081/api/v2/child', {'id ': 12345})
             ]
         }
 
@@ -439,7 +439,7 @@ class BatchViewTest(unittest.TestCase):
         self.assertEqual(len(data), 1)
 
         self.assertEqual(data[0]['status'], 409)
-        self.assertEqual(data[0]['uri'], 'http://localhost:8081/api/v2/child')
+        self.assertEqual(data[0]['uri'], '//localhost:8081/api/v2/child')
 
     @patch('savory_pie.django.views.APIContext.build_resource_uri')
     def test_post_get_put(self, build_resource_uri):
@@ -454,15 +454,15 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'put',
-                    'http://localhost:8081/api/v2/child/grandchild',
+                    '//localhost:8081/api/v2/child/grandchild',
                     {'business_id': 12345}
                 ), self._generate_batch_partial(
                     'get',
-                    'http://localhost:8081/api/v2/child',
+                    '//localhost:8081/api/v2/child',
                     {'business_id': 12345}
                 ), self._generate_batch_partial(
                     'post',
-                    'http://localhost:8081/api/v2/child/grandchild',
+                    '//localhost:8081/api/v2/child/grandchild',
                     {'business_id': 12345}
                 )
             ]
@@ -480,11 +480,11 @@ class BatchViewTest(unittest.TestCase):
         data = response_json['data']
         self.assertEqual(len(data), 3)
         self.assertEqual(data[0]['status'], 200)
-        self.assertEqual(data[0]['uri'], 'http://localhost:8081/api/v2/child/grandchild')
+        self.assertEqual(data[0]['uri'], '//localhost:8081/api/v2/child/grandchild')
         self.assertEqual(data[0]['data'], {u'name': u'value'})
 
         self.assertEqual(data[1]['status'], 200)
-        self.assertEqual(data[1]['uri'], 'http://localhost:8081/api/v2/child')
+        self.assertEqual(data[1]['uri'], '//localhost:8081/api/v2/child')
         self.assertEqual(data[1]['data'], {u'name': u'value'})
         ctx = mock_context()
         ctx.formatter = JSONFormatter()
@@ -492,7 +492,7 @@ class BatchViewTest(unittest.TestCase):
         self.assertEqual(data[1]['etag'], get_sha1(ctx, {u'name': u'value'}))
 
         self.assertEqual(data[2]['status'], 201)
-        self.assertEqual(data[2]['uri'], 'http://localhost:8081/api/v2/child/grandchild')
+        self.assertEqual(data[2]['uri'], '//localhost:8081/api/v2/child/grandchild')
         self.assertEqual(data[2]['location'], 'some new location')
 
     def test_one_fails_one_passes(self):
@@ -506,11 +506,11 @@ class BatchViewTest(unittest.TestCase):
             "data": [
                 self._generate_batch_partial(
                     'put',
-                    'http://localhost:8081/api/v2/child/grandchild',
+                    '//localhost:8081/api/v2/child/grandchild',
                     {'business_id': 12345}
                 ), self._generate_batch_partial(
                     'get',
-                    'http://localhost:8081/api/v2/child',
+                    '//localhost:8081/api/v2/child',
                     {'business_id': 12345}
                 )
             ]
@@ -649,7 +649,7 @@ class ViewTest(unittest.TestCase):
                 }
             ]
         )
-        self.assertEqual(response['Location'], 'http://localhost/api/foo')
+        self.assertEqual(response['Location'], '//localhost/api/foo')
         self.assertIsNotNone(root_resource.post.call_args_list[0].request)
 
     def test_post_with_collision_one(self):
@@ -667,7 +667,7 @@ class ViewTest(unittest.TestCase):
 
         response = savory_dispatch(root_resource, method='POST', body='{}')
         self.assertEqual(response.status_code, 409)
-        self.assertEqual(response.content, '{"resource": "http://localhost/api/"}')
+        self.assertEqual(response.content, '{"resource": "//localhost/api/"}')
 
     def test_post_with_collision_two(self):
         def side_effect(*args, **kwargs):
@@ -685,7 +685,7 @@ class ViewTest(unittest.TestCase):
 
         response = savory_dispatch(root_resource, method='POST', body='{}')
         self.assertEqual(response.status_code, 409)
-        self.assertEqual(response.content, '{"resource": "http://localhost/api/"}')
+        self.assertEqual(response.content, '{"resource": "//localhost/api/"}')
 
     @mock.patch('savory_pie.django.views.logger')
     def test_post_with_exception(self, logger):
@@ -828,13 +828,13 @@ class ViewTest(unittest.TestCase):
 
 class HashTestCase(unittest.TestCase):
     def test_mutable_parameters(self):
-        dct = {'a': 'http://one/two/three/four'}
+        dct = {'a': '//one/two/three/four'}
         ctx = mock_context()
         ctx.formatter = JSONFormatter()
 
         get_sha1(ctx, dct)
         # Make sure that the dct that we pass in is the same dict that gets returned
-        self.assertEqual(dct, {'a': 'http://one/two/three/four'})
+        self.assertEqual(dct, {'a': '//one/two/three/four'})
 
     def test_has_dictionary(self):
         dct = {'a': 'b', 'c': 'd'}

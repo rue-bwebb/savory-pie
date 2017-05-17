@@ -69,7 +69,7 @@ class Request(object):
         return 'api/' + self.resource_path
 
     def build_absolute_uri(self, django_path):
-        return 'http://' + self.host + '/' + django_path
+        return '//' + self.host + '/' + django_path
 
     def read(self):
         if not self.body_file:
