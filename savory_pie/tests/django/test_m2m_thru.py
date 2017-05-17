@@ -15,7 +15,6 @@ def createCreator(model_class, collection):
         return obj
     return createObject
 
-####################
 
 _groups = []
 
@@ -38,6 +37,7 @@ class GroupQuerySetResource(resources.QuerySetResource):
     resource_path = 'group'
     resource_class = GroupResource
 
+
 createGroup = createCreator(Group, _groups)
 
 ######################
@@ -49,6 +49,7 @@ class Person(mock_orm.Model):
     name = Mock(name='person.name')
     groups = Mock(name='person.groups')
     pk = Mock(name='person.pk')
+
 
 Person.groups.all.return_value = _groups
 del Person.groups.add      # this is a "through" relationship
@@ -70,6 +71,7 @@ class PersonResource(resources.ModelResource):
 class PersonQuerySetResource(resources.QuerySetResource):
     resource_path = 'person'
     resource_class = PersonResource
+
 
 createPerson = createCreator(Person, _people)
 
@@ -94,12 +96,14 @@ class MembershipResource(resources.ModelResource):
         fields.RelatedManagerField('person', PersonResource),
     ]
 
+
 Person.groups.through = Membership
 
 
 class MembershipQuerySetResource(resources.QuerySetResource):
     resource_path = 'membership'
     resource_class = MembershipResource
+
 
 createMembership = createCreator(Membership, _memberships)
 

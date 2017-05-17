@@ -224,7 +224,7 @@ class BaseValidator(object):
         return False
 
 
-########## Resource validators ###########
+# Resource Validators
 
 
 class ResourceValidator(BaseValidator):
@@ -492,7 +492,7 @@ class UniquePairedFieldValidator(ResourceValidator):
                 pass
 
 
-########## Field validators ############
+# Field Validators
 
 
 class FieldValidator(BaseValidator):
@@ -604,15 +604,15 @@ class StringFieldMaxLengthValidator(FieldValidator):
         """
         Verify that the value is a string whose length doesn't exceed the maximum.
         """
-        return ((isinstance(value, str) or isinstance(value, unicode))
-                and len(value) <= self._expected_length)
+        return ((isinstance(value, str) or isinstance(value, unicode)) and
+                len(value) <= self._expected_length)
 
 
 class IntFieldMinValidator(FieldValidator):
 
     """
     Test an AttributeField of type 'int' to make sure it is no smaller than a
-    specified minimum.
+    specified minimum
 
     Parameters:
 

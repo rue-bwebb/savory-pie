@@ -70,6 +70,7 @@ def getLogger(name=None, stream=None):
     logger.after_queries = logger_after_queries
     return logger
 
+
 logger = getLogger()
 
 
