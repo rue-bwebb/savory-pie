@@ -56,10 +56,11 @@ Running Tests Coverage
 
 Updating PyPi (to whom it may concern)
 -----
-This builds the project, and uploads it to PyPi (credentials needed)
+Build a release (e.g. `dist/savory-pie-0.2.0.tar.gz`), then upload via the PyPi website.
 ```
-python setup.py sdist register upload
+python setup.py sdist
 ```
+
 
 ```
 its a pie, mate
