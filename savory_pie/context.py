@@ -1,4 +1,5 @@
 import contextlib
+import re
 
 
 class APIContext(object):
@@ -31,6 +32,10 @@ class APIContext(object):
         Resolves the resource that corresponds to the current URI,
         but only within the same resource tree.
         """
+        # Allows comparison with protocol-relative resource URIs
+        if self.base_uri.startswith('//') and not uri.startswith('//'):
+            uri = re.sub('https?:', '', uri)
+
         if not uri.startswith(self.base_uri):
             return None
 
