@@ -15,6 +15,7 @@ def createCreator(model_class, collection):
         return obj
     return createObject
 
+####################
 
 _groups = []
 
@@ -37,7 +38,6 @@ class GroupQuerySetResource(resources.QuerySetResource):
     resource_path = 'group'
     resource_class = GroupResource
 
-
 createGroup = createCreator(Group, _groups)
 
 ######################
@@ -49,7 +49,6 @@ class Person(mock_orm.Model):
     name = Mock(name='person.name')
     groups = Mock(name='person.groups')
     pk = Mock(name='person.pk')
-
 
 Person.groups.all.return_value = _groups
 del Person.groups.add      # this is a "through" relationship
@@ -71,7 +70,6 @@ class PersonResource(resources.ModelResource):
 class PersonQuerySetResource(resources.QuerySetResource):
     resource_path = 'person'
     resource_class = PersonResource
-
 
 createPerson = createCreator(Person, _people)
 
@@ -96,14 +94,12 @@ class MembershipResource(resources.ModelResource):
         fields.RelatedManagerField('person', PersonResource),
     ]
 
-
 Person.groups.through = Membership
 
 
 class MembershipQuerySetResource(resources.QuerySetResource):
     resource_path = 'membership'
     resource_class = MembershipResource
-
 
 createMembership = createCreator(Membership, _memberships)
 
@@ -146,7 +142,7 @@ class ManyToManyThroughTest(unittest.TestCase):
         ctx = mock_context()
 
         def resolve(*args):
-            prefix = '//localhost:8000/api/'
+            prefix = 'http://localhost:8000/api/'
             self.assertTrue(args[0].startswith(prefix))
             arg = args[0][len(prefix):]
             if arg.startswith('group/'):
@@ -162,8 +158,8 @@ class ManyToManyThroughTest(unittest.TestCase):
 
         ctx.resolve_resource_uri = resolve
         source_dict = {
-            'groups': [{'resourceUri': '//localhost:8000/api/group/1', 'name': 'Boy Scouts'}],
-            'resourceUri': '//localhost:8000/api/person/1',
+            'groups': [{'resourceUri': 'http://localhost:8000/api/group/1', 'name': 'Boy Scouts'}],
+            'resourceUri': 'http://localhost:8000/api/person/1',
             'name': 'Charlie'
         }
         resource = PersonResource(_people[0])
@@ -174,4 +170,4 @@ class ManyToManyThroughTest(unittest.TestCase):
         self.assertEqual({'resourceUri': 'uri://groups/1',
                           'name': 'Boy Scouts',
                           '$hash': 'a35a8e769bb1583a840525d1e8fd6b3d02658b04'},
-                         resource.get(ctx, {'resourceUri': '//localhost:8000/api/group/1'}))
+                         resource.get(ctx, {'resourceUri': 'http://localhost:8000/api/group/1'}))

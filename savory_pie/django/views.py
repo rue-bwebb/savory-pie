@@ -188,7 +188,7 @@ def compute_context(resource_path, request, root_resource):
         base_path = full_path[:-len(resource_path)]
 
     ctx = APIContext(
-        base_uri=re.sub('https?:', '', request.build_absolute_uri(base_path)),
+        base_uri=request.build_absolute_uri(base_path),
         root_resource=root_resource,
         formatter=JSONFormatter(),
         request=request

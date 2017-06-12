@@ -173,8 +173,8 @@ class JSONToPython(unittest.TestCase):
                               (dict, unparsable),
                               (type(None), unparsable),
                               (datetime.datetime, unparsable)]:
-            message = ('Expected a TypeError for unparsable ' + str(_type) +
-                       ' with value ' + repr(svalue))
+            message = ('Expected a TypeError for unparsable ' + str(_type)
+                       + ' with value ' + repr(svalue))
             succeeded_incorrectly = False
             try:
                 self.json_formatter.to_python_value(_type, svalue)

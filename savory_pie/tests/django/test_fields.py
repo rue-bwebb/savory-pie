@@ -647,7 +647,7 @@ class SubModelResourceFieldTest(unittest.TestCase):
 
         source_dict = {
             'foo': {
-                'resourceUri': '//testsever/api/v1/bar/20',
+                'resourceUri': 'http://testsever/api/v1/bar/20',
                 'bar': 20
             },
         }
@@ -926,7 +926,7 @@ class RelatedManagerFieldTest(unittest.TestCase):
         target_obj.foo = related_manager
         source_dict = {
             'foo': [{
-                'resourceUri': '//testsever/api/v2/bar/4',
+                'resourceUri': 'http://testsever/api/v2/bar/4',
                 'bar': 14
             }],
         }
