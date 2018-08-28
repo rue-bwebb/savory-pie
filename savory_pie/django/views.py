@@ -309,7 +309,7 @@ def _inner_transaction(ctx, resource, request, func):
             transaction.commit()
         else:
             transaction.rollback()
-    except:
+    except Exception:
         transaction.rollback()
         raise
     return response
